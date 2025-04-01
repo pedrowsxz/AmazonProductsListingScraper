@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amazon Product Scraper</title>
+    <link rel="stylesheet" href="./src/style.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="dark-blue-container">
+        <h1>Amazon Product Scraper</h1>
+      
+        <div class="search-container">
+          <input 
+            type="text" 
+            id="keyword" 
+            placeholder="Enter product keyword to search..." 
+          />
+          <button id="scrape-button">🔍</button>
+        </div>
+      </div>
+      
+      <div id="loading" class="loading hidden">
+        <p>Scraping products...</p>
+      </div>
+      
+      <div id="error-message" class="error-message hidden"></div>
+      
+      <div id="results" class="results-container"></div>
+    </div>
+  
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
