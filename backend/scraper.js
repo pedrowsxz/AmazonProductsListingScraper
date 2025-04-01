@@ -30,10 +30,16 @@ export const scrapeAmazonProductsListing = async (req, res) => {
         //Select all products containers
         const productElements = document.querySelectorAll('[data-component-type="s-search-result"]');
 
+        //Validation of productElements
+        if (!productElements || productElements.length === 0) {
+            res.status(404).json({error: "No products found", details: "Amazon's page structure may have changed"});
+            return;
+        }
+
         //Extract each product information, calling the function extractProductsInformationFromDOM
         const products = Array.from(productElements).map(extractProductsInformationFromDOM);
 
-        //Responds with extracted product data as JSON
+        //Responds with extracted products data as JSON
         res.json(products);
     } catch (error) {
         console.log("Error scraping Amazon: ", error);
