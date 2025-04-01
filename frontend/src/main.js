@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   //API endpoint (the backend server)
   const API_URL = 'http://localhost:3000/api/scrape';
   
-  //Add event listener to the search button, which calls the function scrapeProducts
+  //Add event listener to the scraper button, which calls the function scrapeProducts
   scrapeButton.addEventListener('click', scrapeProducts);
   
   //Also add event listener for Enter key on the input field
@@ -29,8 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     //Clear previous results and errors
-    resultsContainer.innerHTML = '';
-    errorMessageElement.classList.add('hidden');
+    clearPreviousResultsAndErrors();
     
     //Show loading text
     loadingElement.classList.remove('hidden');
@@ -39,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
       //Make the API request
       const response = await fetch(`${API_URL}?keyword=${encodeURIComponent(keyword)}`);
       
-      //Check if the request was successful
+      //Check if the request was unsuccessful
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to fetch products.');
@@ -74,21 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
       productCard.className = 'product-card';
       
       //Generate stars according to rating
-      let starsHtml = '';
-      if (product.rating) {
-        const fullStars = Math.floor(product.rating);
-        const halfStar = product.rating % 1 >= 0.5;
-        
-        for (let i = 0; i < 5; i++) {
-          if (i < fullStars) {
-            starsHtml += '★'; //Full star
-          } else if (i === fullStars && halfStar) {
-            starsHtml += '✬'; //'Half star'
-          } else {
-            starsHtml += '☆'; //Empty star
-          }
-        }
-      }
+      let starsHtml = generateStars(product.rating);
       
       //Set product image, title, stars, rating and number of reviews on its card
       productCard.innerHTML = `
@@ -106,9 +91,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
+  function generateStars(rating) {
+    let stars = '';
+    if (rating) {
+      const fullStars = Math.floor(rating);
+      const halfStar = rating % 1 >= 0.5;
+      
+      for (let i = 0; i < 5; i++) {
+        if (i < fullStars) {
+          stars += '★'; //Full star
+        } else if (i === fullStars && halfStar) {
+          stars += '✬'; //'Half star'
+        } else {
+          stars += '☆'; //Empty star
+        }
+      }
+    }
+    return stars;
+  }
+
   function showError(message) {
     errorMessageElement.textContent = message;
     errorMessageElement.classList.remove('hidden');
     loadingElement.classList.add('hidden');
+  }
+
+  function clearPreviousResultsAndErrors() {
+    resultsContainer.innerHTML = '';
+    errorMessageElement.textContent = '';
+    errorMessageElement.classList.add('hidden');
   }
 });
