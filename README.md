@@ -50,22 +50,18 @@ A simple web application that scrapes Amazon product listings from the first pag
    ```
    The Vite development server will start and provide a local URL (typically http://localhost:5173).
 
-3. Open the provided URL in your web browser.
-
-## How to Use
-
-1. Enter a product keyword in the search input field.
-2. Click the search button or press Enter.
-3. Wait for the results to load.
-4. Browse through the product listings.
-
 ## Important Notes
 
 - Amazon may block requests that appear to be automated. This scraper sets a User-Agent header to mimic a real browser, but it might still be detected as a bot.
-- The structure of Amazon's website may change, which could break the scraper. If this happens, you'll need to update the selectors in the backend code.
+- The structure of Amazon's website may change, which could break the scraper. If this happens, update the selectors in the backend code.
 
 ## Troubleshooting
 
-- If Amazon is blocking requests, you might need to implement more sophisticated techniques like rotating User-Agents, creating agents with 'http.createAgent', adding more headers, including Cookies on the headers or using proxies.
+If Amazon blocks the requests, consider these advanced mitigation techniques:
 
+- **Rotate User-Agents** to simulate diverse browsers/devices 
+- **Enhance request headers** with Amazon-specific cookies and anti-bot headers  
+- **Route traffic through proxies** (residential/rotating IPs)  
+- **Implement request throttling** to mimic human browsing patterns  
 
+*Note: Always comply with Amazon's Terms of Service.*
