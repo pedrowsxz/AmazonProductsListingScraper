@@ -12,16 +12,31 @@ export const scrapeAmazonProductsListing = async (req, res) => {
 
     //Create the Amazon search URL with the keyword as a parameter, and assign it to a url variable
     const url = `https://www.amazon.com/s?k=${encodeURIComponent(keyword)}`;
-
+      
     //Set headers to mimic a real browser (to not be blocked by amazon)
     const headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7',
+        'Accept-Encoding': 'gzip, deflate, br, zstd',
+        'Referer': 'https://www.amazon.com/',
+        'Cookie': 'i18n-prefs=USD; lc-main=en_US;', //Cookies related to localization
+        'Connection': 'keep-alive',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1'
     };
 
     try {
         //Fetch the search result page and assign it to a response variable
-        const response = await axios.get(url, {headers});
+        const response = await axios.get(url, {headers: headers});
         //console.log(response.data);
+
+        //Check if Amazon blocked the request (CAPTCHA)
+        if (response.data.includes("api-services-support@amazon.com")) {
+            return res.status(403).json({ error: "Blocked by Amazon (CAPTCHA)" });
+        }
 
         //Use JSDOM to parse Amazon's webpage HTML
         const dom = new JSDOM(response.data);
@@ -42,6 +57,13 @@ export const scrapeAmazonProductsListing = async (req, res) => {
         //Responds with extracted products data as JSON
         res.json(products);
     } catch (error) {
+        if (error.response) {
+        //Check if Amazon returned a non-200 status (e.g. 403, 503, 502)
+            return res.status(502).json({ 
+                error: "Amazon blocked the request", 
+                status: error.response.status,
+            });
+        }
         console.log("Error scraping Amazon: ", error);
         res.status(500).json({error: "Failed to scrape Amazon products listing page.", details: error.message});
     }
