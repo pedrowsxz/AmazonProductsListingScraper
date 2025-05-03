@@ -41,7 +41,7 @@ A simple web application that scrapes Amazon product listings from the first pag
    cd backend
    bun run server.js
    ```
-   The server will start on http://localhost:3000.
+   The server will start on http://localhost:3000, but the actual api endpoint is being served on http://localhost:3000/api/scrape?keyword={keyword}, in which '{keyword}' is replaced by the search term, removing the curly braces.
 
 2. Start the frontend development server:
    ```bash
@@ -53,6 +53,7 @@ A simple web application that scrapes Amazon product listings from the first pag
 ## Important Notes
 
 - Amazon may block requests that appear to be automated. This scraper sets a User-Agent header to mimic a real browser, but it might still be detected as a bot.
+- About the headers, they can be removed or not, if judged better to do so, or for the sake of simplicity
 - The structure of Amazon's website may change, which could break the scraper. If this happens, update the selectors in the backend code.
 
 ## Troubleshooting

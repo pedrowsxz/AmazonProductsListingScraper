@@ -14,23 +14,39 @@ export const scrapeAmazonProductsListing = async (req, res) => {
     const url = `https://www.amazon.com/s?k=${encodeURIComponent(keyword)}`;
       
     //Set headers to mimic a real browser (to not be blocked by amazon)
+    //Too many headers can backfire and result on a temporary block or CAPTCHA, so they must be used carefully
     const headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', //Chrome version may vary, since it is updated so often
+
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
         'Accept-Encoding': 'gzip, deflate, br, zstd',
+
         'Referer': 'https://www.amazon.com/',
-        'Cookie': 'i18n-prefs=USD; lc-main=en_US;', //Cookies related to localization
+        'Cookie': 'i18n-prefs=USD; lc-main=en_US;', //Cookies for language and localization
+
         'Connection': 'keep-alive',
         'Sec-Fetch-Dest': 'document',
         'Sec-Fetch-Mode': 'navigate',
         'Sec-Fetch-Site': 'none',
         'Sec-Fetch-User': '?1',
-        'Upgrade-Insecure-Requests': '1'
+        'Upgrade-Insecure-Requests': '1',
+
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+
+        //Below are optional headers, which can be uncommented to improve realism
+        //These were copied from actual requests when visiting Amazon in a browser.
+        //I preferred to comment them out and keep them optional, to avoid adding too many headers and risking inconsistency
+
+        //'Sec-Ch-Ua': '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"', //Chrome version may vary
+        //'Sec-Ch-Ua-Mobile': '?0',
+        //'Sec-Ch-Ua-Platform': '"Windows"',
     };
 
     try {
         //Fetch the search result page and assign it to a response variable
-        const response = await axios.get(url, {headers: headers});
+        const response = await axios.get(url, { headers });
         //console.log(response.data);
 
         //Check if Amazon blocked the request (CAPTCHA)
@@ -57,14 +73,14 @@ export const scrapeAmazonProductsListing = async (req, res) => {
         //Responds with extracted products data as JSON
         res.json(products);
     } catch (error) {
+        console.log("Error scraping Amazon: ", error);
         if (error.response) {
         //Check if Amazon returned a non-200 status (e.g. 403, 503, 502)
             return res.status(502).json({ 
-                error: "Amazon blocked the request", 
+                error: "Amazon temporarily blocked the request. Please try again later.",
                 status: error.response.status,
             });
         }
-        console.log("Error scraping Amazon: ", error);
         res.status(500).json({error: "Failed to scrape Amazon products listing page.", details: error.message});
     }
 }
