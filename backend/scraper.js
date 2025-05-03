@@ -15,6 +15,7 @@ export const scrapeAmazonProductsListing = async (req, res) => {
       
     //Set headers to mimic a real browser (to not be blocked by amazon)
     //Too many headers can backfire and result on a temporary block or CAPTCHA, so they must be used carefully
+    //They can be removed or not, if judged better to do so, to avoid risking inconsistency or for the sake of simplicity
     const headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', //Chrome version may vary, since it is updated so often
 
@@ -35,13 +36,10 @@ export const scrapeAmazonProductsListing = async (req, res) => {
         'Cache-Control': 'no-cache',
         'Pragma': 'no-cache',
 
-        //Below are optional headers, which can be uncommented to improve realism
-        //These were copied from actual requests when visiting Amazon in a browser.
-        //I preferred to comment them out and keep them optional, to avoid adding too many headers and risking inconsistency
-
+        ////Optional headers to add realism, copied from requests made from my browser
         //'Sec-Ch-Ua': '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"', //Chrome version may vary
         //'Sec-Ch-Ua-Mobile': '?0',
-        //'Sec-Ch-Ua-Platform': '"Windows"',
+        //'Sec-Ch-Ua-Platform': '"Windows"'
     };
 
     try {
