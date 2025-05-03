@@ -52,7 +52,7 @@ A simple web application that scrapes Amazon product listings from the first pag
 
 ## Important Notes
 
-- Amazon may block requests that appear to be automated. This scraper sets a User-Agent header to mimic a real browser, but it might still be detected as a bot.
+- Amazon may block requests that appear to be automated. This scraper sets a headers to mimic a real browser, but it might still be detected as a bot.
 - About the headers, they can be removed or not, if judged better to do so, or for the sake of simplicity
 - The structure of Amazon's website may change, which could break the scraper. If this happens, update the selectors in the backend code.
 
@@ -62,7 +62,7 @@ If Amazon blocks the requests, consider these advanced mitigation techniques:
 
 - **Rotate User-Agents** to simulate diverse browsers/devices 
 - **Enhance request headers** with Amazon-specific cookies and anti-bot headers  
-- **Route traffic through proxies** (residential/rotating IPs)  
+- **Route traffic through proxies** with residential/rotating IPs, though it might be risky for Amazon, due to flagged proxies
 - **Implement request throttling** to mimic human browsing patterns  
 
 *Note: Always comply with Amazon's Terms of Service.*
