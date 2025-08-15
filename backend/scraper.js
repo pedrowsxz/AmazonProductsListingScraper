@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
 
-export const scrapeAmazonProductsListing = async (req, res) => {
+export const scrapeAmazon = async (req, res) => {
     //Get keyword from query
     const {keyword} = req.query;
 
@@ -14,17 +14,15 @@ export const scrapeAmazonProductsListing = async (req, res) => {
     const url = `https://www.amazon.com/s?k=${encodeURIComponent(keyword)}`;
       
     //Set headers to mimic a real browser (to not be blocked by amazon)
-    //Too many headers can backfire and result on a temporary block or CAPTCHA, so they must be used carefully
-    //They can be removed or not, if judged better to do so, to avoid risking inconsistency or for the sake of simplicity
     const headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', //Chrome version may vary, since it is updated so often
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36',
 
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
         'Accept-Encoding': 'gzip, deflate, br, zstd',
 
         'Referer': 'https://www.amazon.com/',
-        'Cookie': 'i18n-prefs=USD; lc-main=en_US;', //Cookies for language and localization
+        'Cookie': 'i18n-prefs=USD; lc-main=en_US;',
 
         'Connection': 'keep-alive',
         'Sec-Fetch-Dest': 'document',
@@ -35,11 +33,6 @@ export const scrapeAmazonProductsListing = async (req, res) => {
 
         'Cache-Control': 'no-cache',
         'Pragma': 'no-cache',
-
-        ////Optional headers to add realism, copied from requests made from my browser
-        //'Sec-Ch-Ua': '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"', //Chrome version may vary
-        //'Sec-Ch-Ua-Mobile': '?0',
-        //'Sec-Ch-Ua-Platform': '"Windows"'
     };
 
     try {
@@ -70,16 +63,12 @@ export const scrapeAmazonProductsListing = async (req, res) => {
 
         //Responds with extracted products data as JSON
         res.json(products);
+
     } catch (error) {
-        console.log("Error scraping Amazon: ", error);
-        if (error.response) {
-        //Check if Amazon returned a non-200 status (e.g. 403, 503, 502)
-            return res.status(502).json({ 
-                error: "Amazon temporarily blocked the request. Please try again later.",
-                status: error.response.status,
-            });
-        }
-        res.status(500).json({error: "Failed to scrape Amazon products listing page.", details: error.message});
+        console.error("Error scraping Amazon:", error.message);
+        res.status(error.response?.status || 500).json({
+            error: error.message
+        });
     }
 }
 

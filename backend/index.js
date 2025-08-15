@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { scrapeAmazonProductsListing } from './scraper';
+import { scrapeAmazon } from './scraper';
 
 const app = express();
 const PORT = 3000;
@@ -9,7 +9,7 @@ const PORT = 3000;
 app.use(cors())
 
 //Endpoint for scraping Amazon product listings
-app.get('/api/scrape', scrapeAmazonProductsListing);
+app.get('/api/scrape', scrapeAmazon);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

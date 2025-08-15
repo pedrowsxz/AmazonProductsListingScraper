@@ -39,13 +39,13 @@ A simple web application that scrapes Amazon product listings from the first pag
 1. Start the backend server:
    ```bash
    cd backend
-   bun run server.js
+   bun run index.js
    ```
    The server will start on http://localhost:3000, but the actual api endpoint is being served on http://localhost:3000/api/scrape?keyword={keyword}, in which '{keyword}' is replaced by the search term, removing the curly braces.
 
 2. Start the frontend development server:
    ```bash
-   cd ../frontend
+   cd frontend
    bun run dev
    ```
    The Vite development server will start and provide a local URL (typically http://localhost:5173).
